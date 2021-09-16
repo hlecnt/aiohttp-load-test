@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+  locust:
+    image: locustio/locust
+    ports:
+     - "8089:8089"
+    volumes:
+      - ./:/mnt/locust
+    user: "${UID}:${GID}"
+    command: >
+      -f /mnt/locust/locustfile.py -H http://server
+      --users ${USERS:-500} --spawn-rate ${SPAWN:-10}
+      --run-time ${RUNTIME:-2m}
+      --autostart
+      --autoquit 5
+      --html /mnt/locust/users-${USERS:-500}_spawn-${SPAWN:-10}_python-${PYTHON:-3.6.12}_aiohttp-${AIOHTTP:-3.7.3}_loop-${EVENTLOOP-asyncio}.html
+
+  server:
+    build:
+      context: ./
+      dockerfile: dockerfile
+      target: server
+      args:
+        AIOHTTP: ${AIOHTTP:-3.7.3}
+        PYTHON: ${PYTHON:-3.6.12}
+    environment:
+      - EVENTLOOP=${EVENTLOOP-asyncio}
+
+  proxied:
+    build:
+      context: ./
+      dockerfile: dockerfile
+      args:
+        AIOHTTP: ${AIOHTTP:-3.7.3}
+        PYTHON: ${PYTHON:-3.6.12}
+    environment:
+      - EVENTLOOP=${EVENTLOOP-asyncio}
