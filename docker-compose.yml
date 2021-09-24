@@ -14,7 +14,7 @@ services:
       --run-time ${RUNTIME:-2m}
       --autostart
       --autoquit 5
-      --html /mnt/locust/users-${USERS:-500}_spawn-${SPAWN:-10}_python-${PYTHON:-3.6.12}_aiohttp-${AIOHTTP:-3.7.3}_loop-${EVENTLOOP-asyncio}.html
+      --html /mnt/locust/users-${USERS:-500}_spawn-${SPAWN:-10}_python-${PYTHON:-3.6.12}_flavor-${FLAVOR:-buster}_aiohttp-${AIOHTTP:-3.7.3}_loop-${EVENTLOOP-asyncio}.html
 
   server:
     build:
@@ -24,6 +24,7 @@ services:
       args:
         AIOHTTP: ${AIOHTTP:-3.7.3}
         PYTHON: ${PYTHON:-3.6.12}
+        FLAVOR: ${FLAVOR:-buster}
     environment:
       - EVENTLOOP=${EVENTLOOP-asyncio}
 
@@ -34,5 +35,6 @@ services:
       args:
         AIOHTTP: ${AIOHTTP:-3.7.3}
         PYTHON: ${PYTHON:-3.6.12}
+        FLAVOR: ${FLAVOR:-buster}
     environment:
       - EVENTLOOP=${EVENTLOOP-asyncio}

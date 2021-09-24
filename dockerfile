@@ -1,5 +1,6 @@
 ARG PYTHON=3.6.12
-FROM python:${PYTHON}-slim-buster AS base
+ARG FLAVOR=buster
+FROM python:${PYTHON}-slim-${FLAVOR} AS base
 ARG AIOHTTP
 
 RUN mkdir -p /workspace

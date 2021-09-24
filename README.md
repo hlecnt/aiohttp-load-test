@@ -11,6 +11,7 @@ At the end of the test, locust create an HTML report in the current directory.
 
 Some environment variables are avaialble to configure the load tester app:
 - PYTHON: defines the Python version to use in services. More precisely it's the version of 'python:slim_buster' to use. Defaults to `3.6.12`
+- FLAVOR: defines the Debian base linux image version. Defaults to `buster`
 - AIOHTTP: defines the AIOHTTP version to use. Defaults to `3.7.3`
 - EVENTLOOP: defines the event loop to use. It can be one of `asyncio` or `uvloop`. Defaults to asyncio.
 - USERS: defines the number of users that locust will create for its load testing. Defaults to `500`
