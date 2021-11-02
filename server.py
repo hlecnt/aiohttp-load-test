@@ -22,8 +22,13 @@ MAXIMUM_ALLOWED_CONNECTIONS = 1024
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("server")
 
+CT_TOTAL = float(os.environ.get("CT_TOTAL", 1))
+CT_CONNECT = float(os.environ.get("CT_CONNECT", 0.5))
+CT_SOCK_CONNECT = float(os.environ.get("CT_SOCK_CONNECT", 0.5))
 
-timeout = ClientTimeout(total=1, connect=0.5, sock_connect=0.5)
+timeout = ClientTimeout(
+    total=CT_TOTAL, connect=CT_CONNECT, sock_connect=CT_SOCK_CONNECT
+)
 
 
 def signal_term_handler():
@@ -31,6 +36,7 @@ def signal_term_handler():
 
 
 async def starthttpserver(app: web.Application, host: str, port: int):
+    #runner = web.AppRunner(app, access_log=None)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host, port, backlog=MAXIMUM_ALLOWED_CONNECTIONS)
@@ -72,18 +78,21 @@ if __name__ == "__main__":
     logger.info(f"Starting...")
 
     try:
-        type_of_event_loop = os.environ.get('EVENTLOOP', 'asyncio')
-        if type_of_event_loop == 'uvloop':
+        type_of_event_loop = os.environ.get("EVENTLOOP", "asyncio")
+        if type_of_event_loop == "uvloop":
             uvloop.install()
     except:
         pass
     loop = get_running_loop()
     try:
-        logger.info(f"Starting with {'uvloop' if isinstance(loop, uvloop.Loop) else 'asyncio'} event loop")
+        logger.info(
+            f"Starting with {'uvloop' if isinstance(loop, uvloop.Loop) else 'asyncio'} event loop"
+        )
     except:
         logger.info(f"Starting with asyncio event loop")
 
     loop.add_signal_handler(signal.SIGTERM, signal_term_handler)
+    loop.add_signal_handler(signal.SIGINT, signal_term_handler)
 
     app = web.Application()
 
@@ -105,9 +114,8 @@ if __name__ == "__main__":
     logger.info(f"Serving...")
     try:
         loop.run_forever()
-    except KeyboardInterrupt:
-        logger.info("Caught KeyboardInterrupt")
-        pass
+    finally:
+        logger.info("Stopping server ...")
 
     loop.run_until_complete(stophttpserver(runner, site))
     logger.info(f"Bye Bye!")

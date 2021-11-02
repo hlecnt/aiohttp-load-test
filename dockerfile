@@ -20,6 +20,13 @@ FROM base AS server
 COPY server.py /workspace/
 ENTRYPOINT ["/usr/local/bin/python3", "-u", "server.py"]
 
+FROM base AS spied-server
+RUN pip install py-spy
+COPY server.py /workspace/
+COPY spied-boot.bash /workspace/
+RUN chmod +x /workspace/spied-boot.bash
+ENTRYPOINT ["/workspace/spied-boot.bash" ]
+
 FROM base AS client
 COPY client.py /workspace/
 ENTRYPOINT ["/usr/local/bin/python3", "-u", "client.py"]

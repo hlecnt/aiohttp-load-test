@@ -28,6 +28,7 @@ def signal_term_handler():
 
 
 async def starthttpserver(app: web.Application, host: str, port: int):
+    #runner = web.AppRunner(app, access_log=None)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, host, port, backlog=MAXIMUM_ALLOWED_CONNECTIONS)
