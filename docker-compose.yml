@@ -14,7 +14,7 @@ services:
       --run-time ${RUNTIME:-2m}
       --autostart
       --autoquit 5
-      --html /mnt/locust/users-${USERS:-500}_spawn-${SPAWN:-10}_python-${PYTHON:-3.6.12}_flavor-${FLAVOR:-buster}_aiohttp-${AIOHTTP:-3.7.3}_loop-${EVENTLOOP-asyncio}.html
+      --html /mnt/locust/users-${USERS:-500}_spawn-${SPAWN:-10}_python-${PYTHON:-3.6.12}_flavor-${FLAVOR:-buster}_aiohttp-${AIOHTTP:-3.7.3}_loop-${EVENTLOOP-asyncio}_commit-${COMMIT-UNK}.html
 
   server:
     build:
@@ -23,6 +23,22 @@ services:
       target: server
       args:
         AIOHTTP: ${AIOHTTP:-3.7.3}
+        PYTHON: ${PYTHON:-3.6.12}
+        FLAVOR: ${FLAVOR:-buster}
+        CT_TOTAL: ${CT_TOTAL:-1}
+        CT_CONNECT: ${CT_CONNECT:-0.5}
+        CT_SOCK_CONNECT: ${CT_SOCK_CONNECT:-0.5}
+    environment:
+      - EVENTLOOP=${EVENTLOOP-asyncio}
+
+  source-server:
+    build:
+      context: ./
+      dockerfile: dockerfile.source
+      target: server
+      args:
+        COMMIT: ${COMMIT}
+        AIOHTTP: ${AIOHTTP:-v3.7.3}
         PYTHON: ${PYTHON:-3.6.12}
         FLAVOR: ${FLAVOR:-buster}
         CT_TOTAL: ${CT_TOTAL:-1}

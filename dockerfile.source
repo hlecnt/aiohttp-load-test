@@ -1,0 +1,35 @@
+ARG PYTHON=3.6.12
+ARG FLAVOR=buster
+FROM python:${PYTHON}-slim-${FLAVOR} AS base-source
+
+RUN mkdir -p /workspace
+COPY dependencies.txt /workspace/
+COPY resolver.py /workspace/
+RUN apt-get update && \
+    apt-get install -y build-essential git && \
+    pip install -r /workspace/dependencies.txt
+
+WORKDIR /workspace
+RUN git clone https://github.com/aio-libs/aiohttp.git
+
+
+FROM base-source as base
+ARG COMMIT
+
+WORKDIR /workspace/aiohttp
+RUN echo "Fetch commit $COMMIT" && \
+    git reset --hard $COMMIT && \
+    git submodule update --init && \
+    pip install .
+
+RUN apt-get remove -y --purge build-essential && \
+      apt-get autoremove -y && \
+      rm -rf /var/lib/apt/lists/*
+
+EXPOSE 80
+
+FROM base AS server
+WORKDIR /workspace
+RUN rm -rf /workspace/aiohttp
+COPY server.py /workspace/
+ENTRYPOINT ["/usr/local/bin/python3", "server.py"]

@@ -18,7 +18,7 @@ EXPOSE 80
 
 FROM base AS server
 COPY server.py /workspace/
-ENTRYPOINT ["/usr/local/bin/python3", "-u", "server.py"]
+ENTRYPOINT ["/usr/local/bin/python3", "server.py"]
 
 FROM base AS spied-server
 RUN pip install py-spy
@@ -29,8 +29,8 @@ ENTRYPOINT ["/workspace/spied-boot.bash" ]
 
 FROM base AS client
 COPY client.py /workspace/
-ENTRYPOINT ["/usr/local/bin/python3", "-u", "client.py"]
+ENTRYPOINT ["/usr/local/bin/python3", "client.py"]
 
 FROM base AS proxied
 COPY proxied.py /workspace/
-ENTRYPOINT ["/usr/local/bin/python3", "-u", "proxied.py"]
+ENTRYPOINT ["/usr/local/bin/python3", "proxied.py"]
